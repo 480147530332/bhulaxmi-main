@@ -41,7 +41,13 @@ import ProductManager from "./admin/ProductManager";
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
-  const isAdmin = localStorage.getItem("admin") === "true";
+ const [isAdmin, setIsAdmin] = React.useState(localStorage.getItem("admin") === "true");
+
+React.useEffect(() => {
+  const stored = localStorage.getItem("admin") === "true";
+  setIsAdmin(stored);
+}, []);
+
 
   const handleLogout = () => {
     localStorage.removeItem("admin");

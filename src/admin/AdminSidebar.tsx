@@ -27,7 +27,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ onLogout }) => {
 
   return (
     <>
-      {/* Mobile toggle button */}
+      {/* ✅ Mobile toggle button */}
       <button
         onClick={() => setOpen(!open)}
         className="md:hidden fixed top-4 left-4 z-50 bg-gray-900 text-white p-2 rounded-md"
@@ -35,13 +35,26 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ onLogout }) => {
         {open ? <X size={22} /> : <Menu size={22} />}
       </button>
 
-      {/* Sidebar */}
+      {/* ✅ Mobile overlay when sidebar is open */}
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      {/* ✅ Sidebar */}
       <div
-        className={`fixed md:static z-40 h-screen w-64 bg-gray-900 text-white flex flex-col transform transition-transform duration-300 ${
+        className={`fixed md:static z-40 h-screen w-64 bg-gray-900 text-white flex flex-col overflow-y-auto transform transition-transform duration-300 ${
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="p-4 text-2xl font-bold border-b border-gray-700">💎 Admin</div>
+        {/* Header */}
+        <div className="p-4 text-2xl font-bold border-b border-gray-700">
+          💎 Admin Panel
+        </div>
+
+        {/* Menu links */}
         <nav className="flex-1 p-4 space-y-2">
           {menuItems.map((item) => (
             <Link
@@ -53,12 +66,16 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ onLogout }) => {
               }`}
             >
               {item.icon}
-              {item.name}
+              <span>{item.name}</span>
             </Link>
           ))}
         </nav>
+
+        {/* ✅ Logout button with confirmation */}
         <button
-          onClick={onLogout}
+          onClick={() => {
+            if (confirm("Are you sure you want to log out?")) onLogout();
+          }}
           className="m-4 p-2 flex items-center gap-2 justify-center bg-red-600 hover:bg-red-700 rounded-md transition"
         >
           <LogOut size={18} /> Logout

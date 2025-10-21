@@ -1,68 +1,59 @@
-import { useState } from "react";
-import { Lock, LogIn } from "lucide-react";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import React, { useState, useEffect } from "react";
 
-const ADMIN_EMAIL = "admin@bhulaxmi.com"; // change this to your email
-const ADMIN_PASSWORD = "bhulaxmi123"; // change this to a strong password
-
-export default function AdminLogin() {
-  const [email, setEmail] = useState("");
+const AdminLogin: React.FC = () => {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  // ✅ If already logged in, redirect directly
+  useEffect(() => {
+    if (localStorage.getItem("admin") === "true") {
+      window.location.href = "/admin";
+    }
+  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+
+    // ✅ Simple credential check (can be replaced with API later)
+    if (username === "admin" && password === "secure@789") {
       localStorage.setItem("admin", "true");
-      toast.success("Welcome back, Admin!");
-      window.location.href = "/admin"; // Redirect to dashboard
+      window.location.href = "/admin";
     } else {
-      toast.error("Invalid credentials!");
+      setError("Invalid credentials. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-yellow-100 to-amber-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-gray-900 p-10 rounded-3xl shadow-2xl w-full max-w-md border border-amber-100 dark:border-gray-700"
-      >
-        <div className="flex flex-col items-center mb-6">
-          <div className="p-3 bg-amber-100 rounded-full mb-3">
-            <Lock className="w-8 h-8 text-amber-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-amber-700">Admin Login</h1>
-        </div>
-
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm">
+        <h2 className="text-2xl font-bold mb-4 text-center">Admin Login</h2>
         <form onSubmit={handleLogin} className="space-y-4">
-          <Input
-            type="email"
-            placeholder="Admin Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="bg-white/50 dark:bg-gray-800"
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
           />
-          <Input
+          <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
-            className="bg-white/50 dark:bg-gray-800"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
           />
-
-          <Button
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <button
             type="submit"
-            className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+            className="w-full bg-gray-800 text-white rounded-lg py-2 hover:bg-gray-700 transition"
           >
-            <LogIn className="w-4 h-4 mr-2" /> Login
-          </Button>
+            Login
+          </button>
         </form>
-      </motion.div>
+      </div>
     </div>
   );
-}
+};
+
+export default AdminLogin;

@@ -19,9 +19,9 @@ createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ErrorBoundary>
       <ThemeProvider>
-        <BrowserRouter>
+        
           <App />
-        </BrowserRouter>
+       
       </ThemeProvider>
     </ErrorBoundary>
   </React.StrictMode>

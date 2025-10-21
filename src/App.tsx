@@ -56,7 +56,7 @@ const App: React.FC = () => {
           <Sonner />
 
           {/* ✅ FIX: Add BrowserRouter here */}
-          <BrowserRouter>
+        
             <Routes>
               {/* 🛍️ SHOP ROUTES */}
               <Route element={<Layout />}>
@@ -116,7 +116,7 @@ const App: React.FC = () => {
             {/* 🤖 Assistants */}
             <AIShoppingAssistant />
             <SupportChatbot />
-          </BrowserRouter>
+          
         </CurrencyProvider>
       </TooltipProvider>
     </QueryClientProvider>

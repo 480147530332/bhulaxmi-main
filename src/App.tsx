@@ -30,7 +30,7 @@ import { PrivacyPolicy } from "./components/PrivacyPolicy";
 import { TermsOfService } from "./components/TermsOfService";
 
 // ✅ Admin imports
-import AdminLayout from "./admin/AdminLayout";
+import AdminSidebar from "./admin/AdminSidebar";
 import AdminDashboard from "./pages/AdminDashboard";
 import Products from "./pages/Products";
 import Orders from "./pages/Orders";
@@ -54,9 +54,11 @@ const App: React.FC = () => {
         <CurrencyProvider>
           <Toaster />
           <Sonner />
-         
+
+          {/* ✅ FIX: Add BrowserRouter here */}
+          <BrowserRouter>
             <Routes>
-              {/* 🛍️ Public Site Routes */}
+              {/* 🛍️ SHOP ROUTES */}
               <Route element={<Layout />}>
                 <Route path="/" element={<Index />} />
                 <Route path="/gold" element={<Gold />} />
@@ -70,6 +72,7 @@ const App: React.FC = () => {
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="/loyalty" element={<Loyalty />} />
+                <Route path="/admin/products" element={<ProductManager />} />
                 <Route path="/visual-search" element={<VisualSearchPage />} />
                 <Route path="/shipping-returns" element={<ShippingReturns />} />
                 <Route path="/size-guide" element={<SizeGuide />} />
@@ -80,31 +83,40 @@ const App: React.FC = () => {
                 <Route path="*" element={<NotFound />} />
               </Route>
 
-              {/* 💼 Admin Login */}
+              {/* 💎 ADMIN LOGIN */}
               <Route
                 path="/admin/login"
                 element={isAdmin ? <Navigate to="/admin" /> : <AdminLogin />}
               />
 
-              {/* 💎 Admin Dashboard */}
+              {/* 💼 ADMIN DASHBOARD ROUTES */}
               {isAdmin ? (
-                <Route path="/admin" element={<AdminLayout onLogout={handleLogout} />}>
-                  <Route index element={<AdminDashboard />} />
-                  <Route path="products" element={<Products />} />
-                  <Route path="add-product" element={<ProductManager />} />
-                  <Route path="orders" element={<Orders />} />
-                  <Route path="customers" element={<Customers />} />
-                  <Route path="*" element={<Navigate to="/admin" />} />
-                </Route>
+                <Route
+                  path="/admin/*"
+                  element={
+                    <div className="flex">
+                      <AdminSidebar onLogout={handleLogout} />
+                      <div className="flex-1 bg-gray-50 min-h-screen p-6">
+                        <Routes>
+                          <Route path="" element={<AdminDashboard />} />
+                          <Route path="products" element={<Products />} />
+                          <Route path="orders" element={<Orders />} />
+                          <Route path="customers" element={<Customers />} />
+                          <Route path="*" element={<Navigate to="/admin" />} />
+                        </Routes>
+                      </div>
+                    </div>
+                  }
+                />
               ) : (
                 <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
               )}
             </Routes>
-        
 
-          {/* 🤖 AI Assistants */}
-          <AIShoppingAssistant />
-          <SupportChatbot />
+            {/* 🤖 Assistants */}
+            <AIShoppingAssistant />
+            <SupportChatbot />
+          </BrowserRouter>
         </CurrencyProvider>
       </TooltipProvider>
     </QueryClientProvider>

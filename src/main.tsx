@@ -7,13 +7,14 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
 // Register service worker
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(() => {
-      // Silent fail - PWA optional
-    });
-  });
-}
+
+// if ("serviceWorker" in navigator) {
+//   window.addEventListener("load", () => {
+//     navigator.serviceWorker.register("/sw.js").catch(() => {
+      
+//     });
+//   });
+// }
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

@@ -1,108 +1,101 @@
 import React, { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  getAllProducts,
-  Product,
-  products as initialProducts,
-} from "@/data/products"; // adjust path if needed
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Users,
+  LogOut,
+  Menu,
+  X,
+} from "lucide-react";
 
-export default function AdminProducts() {
-  const [productList, setProductList] = useState<Product[]>(getAllProducts());
-  const [filter, setFilter] = useState<"all" | Product["category"]>("all");
+interface AdminSidebarProps {
+  onLogout?: () => void; // optional, we handle inside too
+}
 
-  const handleDelete = (id: string) => {
-    const updated = productList.filter((p) => p.id !== id);
-    setProductList(updated);
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ onLogout }) => {
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    if (confirm("Are you sure you want to log out?")) {
+      localStorage.removeItem("admin");
+      setOpen(false);
+      navigate("/"); // ✅ Redirect to homepage after logout
+    }
   };
 
-  const handleAdd = () => {
-    const newProduct: Product = {
-      id: `custom-${Date.now()}`,
-      name: "New Product",
-      price: 0,
-      image: "https://via.placeholder.com/150",
-      description: "Custom jewelry product",
-      category: "gold",
-    };
-    setProductList([newProduct, ...productList]);
-  };
-
-  const filtered =
-    filter === "all"
-      ? productList
-      : productList.filter((p) => p.category === filter);
+  const menuItems = [
+    { name: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/admin" },
+    { name: "Products", icon: <Package size={20} />, path: "/admin/products" },
+    { name: "Orders", icon: <ShoppingCart size={20} />, path: "/admin/orders" },
+    { name: "Customers", icon: <Users size={20} />, path: "/admin/customers" },
+  ];
 
   return (
-    <div className="p-6">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <h1 className="text-2xl font-bold">Manage Products</h1>
-        <div className="flex items-center gap-4">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value as any)}
-            className="border border-gray-300 rounded-md px-3 py-2"
-          >
-            <option value="all">All Categories</option>
-            <option value="gold">Gold</option>
-            <option value="silver">Silver</option>
-            <option value="diamond">Diamond</option>
-            <option value="gems">Gems</option>
-          </select>
+    <>
+      {/* ✅ Mobile toggle button */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="md:hidden fixed top-4 left-4 z-50 bg-gray-900 text-white p-2 rounded-md shadow-lg"
+      >
+        {open ? <X size={22} /> : <Menu size={22} />}
+      </button>
+
+      {/* ✅ Mobile overlay when sidebar is open */}
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      {/* ✅ Sidebar */}
+      <div
+        className={`fixed md:static z-40 h-screen w-64 bg-gray-900 text-white flex flex-col overflow-y-auto transform transition-transform duration-300 ${
+          open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        {/* Header */}
+        <div className="p-4 text-2xl font-bold border-b border-gray-700 flex items-center justify-between">
+          <span>💎 Admin Panel</span>
           <button
-            onClick={handleAdd}
-            className="bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700"
+            onClick={() => setOpen(false)}
+            className="md:hidden text-gray-400 hover:text-white"
           >
-            + Add Product
+            <X size={20} />
           </button>
         </div>
-      </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full border text-sm">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-3 text-left">Image</th>
-              <th className="p-3 text-left">Name</th>
-              <th className="p-3 text-left">Price</th>
-              <th className="p-3 text-left">Category</th>
-              <th className="p-3 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((p) => (
-              <tr key={p.id} className="border-b hover:bg-gray-50">
-                <td className="p-3">
-                  <img
-                    src={p.image}
-                    alt={p.name}
-                    className="w-12 h-12 object-cover rounded"
-                  />
-                </td>
-                <td className="p-3 font-medium">{p.name}</td>
-                <td className="p-3">${p.price}</td>
-                <td className="p-3 capitalize">{p.category}</td>
-                <td className="p-3">
-                  <button
-                    onClick={() => handleDelete(p.id)}
-                    className="text-red-500 hover:underline"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {filtered.length === 0 && (
-              <tr>
-                <td
-                  colSpan={5}
-                  className="p-4 text-center text-gray-500 italic"
-                >
-                  No products found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        {/* Menu links */}
+        <nav className="flex-1 p-4 space-y-2">
+          {menuItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              onClick={() => setOpen(false)}
+              className={`flex items-center gap-3 p-2 rounded-md hover:bg-gray-800 transition ${
+                location.pathname === item.path ? "bg-gray-800" : ""
+              }`}
+            >
+              {item.icon}
+              <span>{item.name}</span>
+            </Link>
+          ))}
+        </nav>
+
+        {/* ✅ Logout button */}
+        <button
+          onClick={handleLogout}
+          className="m-4 p-2 flex items-center gap-2 justify-center bg-red-600 hover:bg-red-700 rounded-md transition"
+        >
+          <LogOut size={18} /> Logout
+        </button>
       </div>
-    </div>
+    </>
   );
-}
+};
+
+export default AdminSidebar;

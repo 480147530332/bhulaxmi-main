@@ -49,10 +49,11 @@ React.useEffect(() => {
 }, []);
 
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin");
-    window.location.href = "/admin/login";
-  };
+const handleLogout = () => {
+  localStorage.removeItem("admin");
+  window.location.href = "/";
+};
+
 
   return (
     <QueryClientProvider client={queryClient}>

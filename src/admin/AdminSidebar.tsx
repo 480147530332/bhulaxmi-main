@@ -24,10 +24,9 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ onLogout }) => {
     { name: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/admin" },
     { name: "Products", icon: <Package size={20} />, path: "/admin/products" },
     { name: "Orders", icon: <ShoppingCart size={20} />, path: "/admin/orders" },
-
     { name: "Subscribers", icon: <Mail size={20} />, path: "/admin/subscribers" },
     { name: "Recent Orders", icon: <ClipboardList size={20} />, path: "/admin/recent-orders" },
-    { name: "Customer Notify", icon: <Mail size={20} />, path: "/admin/customer-notify" },
+    // { name: "Customer Notify", icon: <Mail size={20} />, path: "/admin/customer-notify" },
 
   ];
 

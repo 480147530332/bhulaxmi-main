@@ -161,8 +161,8 @@ const handleLogout = () => {
 <Route path="/admin/recent-orders" element={<RecentOrders />} />
 <Route path="/admin/customers" element={<Customers />} />
 
-  {/*  NEW: Customer Notify */}
-<Route
+
+{/* <Route
   path="/admin/customer-notify"
   element={
     <div className="flex">
@@ -172,7 +172,7 @@ const handleLogout = () => {
       </div>
     </div>
   }
-/>
+/> */}
 
               </>
 

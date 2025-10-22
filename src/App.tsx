@@ -28,15 +28,23 @@ import Account from "./pages/Account";
 import { CurrencyProvider } from "./components/MultiCurrency";
 import { PrivacyPolicy } from "./components/PrivacyPolicy";
 import { TermsOfService } from "./components/TermsOfService";
+import Subscribers from "./admin/Subscribers";
+import RecentOrders from "./admin/RecentOrders";
+import Customers from "./pages/CustomerDashboard";
 
 // ✅ Admin imports
 import AdminSidebar from "./admin/AdminSidebar";
 import AdminDashboard from "./pages/AdminDashboard";
 import Products from "./pages/Products";
 import Orders from "./pages/Orders";
-import Customers from "./pages/Customers";
+// import Customers from "./pages/Customers";
 import AdminLogin from "./pages/AdminLogin";
 import ProductManager from "./admin/ProductManager";
+import DeliveryTracking from "./pages/DeliveryTracking";
+import CustomerLogin from "./pages/CustomerLogin";
+import CustomerRegister from "./pages/CustomerRegister";
+import CustomerDashboard from "./pages/CustomerDashboard";
+import CustomerNotify from "./admin/CustomerNotify";
 
 const queryClient = new QueryClient();
 
@@ -84,7 +92,25 @@ const handleLogout = () => {
               <Route path="/refund-policy" element={<RefundPolicy />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/customer/login" element={<CustomerLogin />} />
+<Route path="/customer/register" element={<CustomerRegister />} />
+<Route path="/customer/dashboard" element={<CustomerDashboard />} />  
+
             </Route>
+
+<Route
+  path="/admin/delivery"
+  element={
+    <div className="flex">
+      <AdminSidebar onLogout={handleLogout} />
+      <div className="flex-1 bg-gray-50 min-h-screen p-6">
+        <DeliveryTracking/>
+      </div>
+    </div>
+  }
+/>
+
+
 
             {/* 💎 ADMIN LOGIN */}
             <Route
@@ -117,6 +143,9 @@ const handleLogout = () => {
                     </div>
                   }
                 />
+
+
+                
                 <Route
                   path="/admin/orders"
                   element={
@@ -128,18 +157,25 @@ const handleLogout = () => {
                     </div>
                   }
                 />
-                <Route
-                  path="/admin/customers"
-                  element={
-                    <div className="flex">
-                      <AdminSidebar onLogout={handleLogout} />
-                      <div className="flex-1 bg-gray-50 min-h-screen p-6">
-                        <Customers />
-                      </div>
-                    </div>
-                  }
-                />
+              <Route path="/admin/subscribers" element={<Subscribers />} />
+<Route path="/admin/recent-orders" element={<RecentOrders />} />
+<Route path="/admin/customers" element={<Customers />} />
+
+  {/*  NEW: Customer Notify */}
+<Route
+  path="/admin/customer-notify"
+  element={
+    <div className="flex">
+      <AdminSidebar onLogout={handleLogout} />
+      <div className="flex-1 bg-gray-50 min-h-screen p-6">
+        <CustomerNotify />
+      </div>
+    </div>
+  }
+/>
+
               </>
+
             ) : (
               <Route path="/admin/*" element={<Navigate to="/admin/login" />} />
             )}

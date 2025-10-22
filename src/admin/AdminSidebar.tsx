@@ -5,6 +5,8 @@ import {
   Package,
   ShoppingCart,
   Users,
+  Mail,
+  ClipboardList,
   LogOut,
   Menu,
   X,
@@ -22,7 +24,11 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ onLogout }) => {
     { name: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/admin" },
     { name: "Products", icon: <Package size={20} />, path: "/admin/products" },
     { name: "Orders", icon: <ShoppingCart size={20} />, path: "/admin/orders" },
-    { name: "Customers", icon: <Users size={20} />, path: "/admin/customers" },
+
+    { name: "Subscribers", icon: <Mail size={20} />, path: "/admin/subscribers" },
+    { name: "Recent Orders", icon: <ClipboardList size={20} />, path: "/admin/recent-orders" },
+    { name: "Customer Notify", icon: <Mail size={20} />, path: "/admin/customer-notify" },
+
   ];
 
   return (
@@ -71,7 +77,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ onLogout }) => {
           ))}
         </nav>
 
-        {/* ✅ Logout button with confirmation */}
+        {/* ✅ Logout button */}
         <button
           onClick={() => {
             if (confirm("Are you sure you want to log out?")) onLogout();

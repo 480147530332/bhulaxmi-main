@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 import {
   DollarSign,
   ShoppingBag,
@@ -7,8 +7,22 @@ import {
   Users,
   Clock,
   ArrowRight,
+  TrendingUp,
+  Mail,
+  Eye,
+  Activity,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
+import { getVisitorStats } from "../utils/visitorTracker";
 
 const AdminDashboard = () => {
   const [productsCount, setProductsCount] = useState(0);
@@ -16,7 +30,21 @@ const AdminDashboard = () => {
   const [ordersCount, setOrdersCount] = useState(0);
   const [salesTotal, setSalesTotal] = useState("$0");
 
-  // Load live data from localStorage
+  // ✅ Visitor Stats
+  const [visitorStats, setVisitorStats] = useState({
+    totalVisits: 0,
+    uniqueVisitorsCount: 0,
+    activeVisitors: 0,
+  });
+
+  useEffect(() => {
+    const updateStats = () => setVisitorStats(getVisitorStats());
+    updateStats();
+    const interval = setInterval(updateStats, 5000); // refresh every 5 sec
+    return () => clearInterval(interval);
+  }, []);
+
+  // ✅ Load live data from localStorage
   useEffect(() => {
     const products = JSON.parse(localStorage.getItem("products") || "[]");
     const customers = JSON.parse(localStorage.getItem("customers") || "[]");
@@ -33,11 +61,14 @@ const AdminDashboard = () => {
     setSalesTotal(`$${totalSales.toFixed(2)}`);
   }, []);
 
+  // ✅ Stats Summary
   const stats = [
     { title: "Total Sales", value: salesTotal, icon: DollarSign },
     { title: "Total Orders", value: ordersCount, icon: ShoppingBag },
     { title: "Products", value: productsCount, icon: Package },
     { title: "Customers", value: customersCount, icon: Users },
+    { title: "Unique Visitors", value: visitorStats.uniqueVisitorsCount, icon: Eye },
+    { title: "Active Visitors", value: visitorStats.activeVisitors, icon: Activity },
   ];
 
   const orders = JSON.parse(localStorage.getItem("orders") || "[]");
@@ -56,6 +87,17 @@ const AdminDashboard = () => {
     }
   };
 
+  // ✅ Weekly visitor data for insights chart
+  const visitsData = [
+    { name: "Mon", visits: 120 },
+    { name: "Tue", visits: 180 },
+    { name: "Wed", visits: 90 },
+    { name: "Thu", visits: 160 },
+    { name: "Fri", visits: 200 },
+    { name: "Sat", visits: 140 },
+    { name: "Sun", visits: 100 },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -70,7 +112,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
@@ -96,6 +138,78 @@ const AdminDashboard = () => {
             );
           })}
         </div>
+
+        {/* ✅ Customer Insights Chart */}
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md border border-amber-100 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-amber-700 flex items-center gap-2">
+              <TrendingUp className="text-amber-500" /> Customer Insights
+            </h2>
+            <span className="text-gray-500 text-sm">
+              Weekly Visitors Overview
+            </span>
+          </div>
+
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={visitsData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" stroke="#6b7280" />
+                <YAxis stroke="#6b7280" />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="visits"
+                  stroke="#f59e0b"
+                  strokeWidth={3}
+                  dot={{ r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Newsletter Subscribers Table */}
+{/* ✅ Newsletter Subscribers Table */}
+<div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md border border-amber-100 dark:border-gray-700 overflow-hidden">
+  <div className="p-4 border-b border-amber-100 dark:border-gray-700 flex items-center justify-between">
+    <h2 className="text-xl font-semibold text-amber-700">Newsletter Subscribers</h2>
+    <Mail className="w-5 h-5 text-amber-500" />
+  </div>
+
+  {(() => {
+    const subscribers = JSON.parse(localStorage.getItem("newsletterSubscribers") || "[]");
+
+    if (!Array.isArray(subscribers) || subscribers.length === 0) {
+      return <p className="text-center py-6 text-gray-500">No newsletter subscribers yet.</p>;
+    }
+
+    return (
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800 text-sm">
+          <thead className="bg-amber-50 dark:bg-gray-800">
+            <tr>
+              <th className="px-6 py-3 text-left font-semibold">#</th>
+              <th className="px-6 py-3 text-left font-semibold">Email</th>
+              <th className="px-6 py-3 text-left font-semibold">Date Subscribed</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+            {subscribers.map((sub: { email: string; date: string }, index: number) => (
+              <tr key={index} className="hover:bg-amber-50/40 dark:hover:bg-gray-800/40">
+                <td className="px-6 py-4 font-medium">{index + 1}</td>
+                <td className="px-6 py-4">{sub.email}</td>
+                <td className="px-6 py-4">{new Date(sub.date).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  })()}
+</div>
+
+
 
         {/* Manage Products Shortcut */}
         <div className="flex justify-end">

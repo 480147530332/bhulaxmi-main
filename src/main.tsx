@@ -5,6 +5,10 @@ import App from "./App";
 import "./index.css";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { trackVisitor } from "./utils/visitorTracker";
+
+trackVisitor();
+
 
 // Register service worker
 
